@@ -1,15 +1,18 @@
-# Spring Boot CRUD API Template
+# Spring Boot E-commerce API Template
 
-A professional Spring Boot template for building RESTful APIs with CRUD operations, featuring clean architecture, JPA integration, and H2 database support.
+A comprehensive Spring Boot template for building RESTful APIs with full e-commerce functionality, featuring clean architecture, JPA relationships, and H2 database support.
 
 ## 🚀 Features
 
 - **RESTful API** with complete CRUD operations
 - **Spring Boot 3.5.3** with Java 21
-- **JPA/Hibernate** for data persistence
+- **JPA/Hibernate** for data persistence with complex relationships
 - **H2 Database** for development and testing
 - **Layered Architecture** (Controller → Service → Repository)
-- **Test Profile** with database seeding
+- **E-commerce Domain Model** with Users, Orders, Products, Categories
+- **Many-to-Many Associations** with JoinTable and extra attributes
+- **Order Management System** with OrderItems and OrderStatus enum
+- **Test Profile** with comprehensive database seeding
 - **Maven** build system
 - **Clean Code** structure following Spring Boot best practices
 
@@ -60,12 +63,50 @@ The application uses H2 in-memory database for development and testing.
 | GET | `/users` | Get all users |
 | GET | `/users/{id}` | Get user by ID |
 
+### Order Management
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/orders` | Get all orders |
+| GET | `/orders/{id}` | Get order by ID |
+
+### Product Management
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/products` | Get all products |
+| GET | `/products/{id}` | Get product by ID |
+
+### Category Management
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/categories` | Get all categories |
+| GET | `/categories/{id}` | Get category by ID |
+
 ### Sample Data
 
-The application automatically seeds the database with sample users:
+The application automatically seeds the database with comprehensive sample data:
 
+**Users:**
 - Maria Brown (maria@gmail.com)
 - Alex Green (alex@gmail.com)
+
+**Categories:**
+- Electronics
+- Books
+- Computers
+
+**Products:**
+- The Lord of the Rings (Books)
+- Smart TV (Electronics, Computers)
+- Macbook Pro (Computers)
+- PC Gamer (Computers)
+- Rails for Dummies (Books)
+
+**Orders:**
+- Multiple orders with different statuses (PAID, WAITING_PAYMENT, DELIVERED)
+- Order items linking products to orders with quantities and prices
 
 ## 🏗️ Project Structure
 
@@ -77,13 +118,31 @@ src/
 │   │   ├── config/
 │   │   │   └── TestConfig.java          # Test configuration and data seeding
 │   │   ├── entities/
-│   │   │   └── User.java                # User entity
+│   │   │   ├── User.java                # User entity with order associations
+│   │   │   ├── Order.java               # Order entity with status and items
+│   │   │   ├── Product.java             # Product entity with categories
+│   │   │   ├── Category.java            # Category entity
+│   │   │   ├── OrderItem.java           # Order item with composite key
+│   │   │   ├── enums/
+│   │   │   │   └── OrderStatus.java     # Order status enumeration
+│   │   │   └── pk/
+│   │   │       └── OrderItemPK.java     # Composite primary key for OrderItem
 │   │   ├── repositories/
-│   │   │   └── UserRepository.java      # Data access layer
+│   │   │   ├── UserRepository.java      # User data access layer
+│   │   │   ├── OrderRepository.java     # Order data access layer
+│   │   │   ├── ProductRepository.java   # Product data access layer
+│   │   │   ├── CategoryRepository.java  # Category data access layer
+│   │   │   └── OrderItemRepository.java # OrderItem data access layer
 │   │   ├── resources/
-│   │   │   └── UserResource.java        # REST controller
+│   │   │   ├── UserResource.java        # User REST controller
+│   │   │   ├── OrderResource.java       # Order REST controller
+│   │   │   ├── ProductResource.java     # Product REST controller
+│   │   │   └── CategoryResource.java    # Category REST controller
 │   │   └── services/
-│   │       └── UserService.java         # Business logic layer
+│   │       ├── UserService.java         # User business logic layer
+│   │       ├── OrderService.java        # Order business logic layer
+│   │       ├── ProductService.java      # Product business logic layer
+│   │       └── CategoryService.java     # Category business logic layer
 │   └── resources/
 │       ├── application.properties       # Main configuration
 │       └── application-test.properties  # Test profile configuration
@@ -118,25 +177,81 @@ mvn test
 
 ## 📚 Usage Examples
 
-### Get All Users
+### User Operations
 
 ```bash
+# Get all users
 curl -X GET http://localhost:8080/users
-```
 
-### Get User by ID
-
-```bash
+# Get user by ID
 curl -X GET http://localhost:8080/users/1
 ```
+
+### Order Operations
+
+```bash
+# Get all orders
+curl -X GET http://localhost:8080/orders
+
+# Get order by ID
+curl -X GET http://localhost:8080/orders/1
+```
+
+### Product Operations
+
+```bash
+# Get all products
+curl -X GET http://localhost:8080/products
+
+# Get product by ID
+curl -X GET http://localhost:8080/products/1
+```
+
+### Category Operations
+
+```bash
+# Get all categories
+curl -X GET http://localhost:8080/categories
+
+# Get category by ID
+curl -X GET http://localhost:8080/categories/1
+```
+
+## 🏛️ Architecture & Design Patterns
+
+### Domain Model
+- **User**: Represents system users with personal information and order history
+- **Order**: Represents customer orders with timestamps and status tracking
+- **Product**: Represents items for sale with pricing and categorization
+- **Category**: Represents product categories with many-to-many relationships
+- **OrderItem**: Represents the association between orders and products with quantity and pricing
+
+### JPA Relationships
+- **OneToMany**: User → Orders (one user can have many orders)
+- **ManyToOne**: Order → User (many orders belong to one user)
+- **ManyToMany**: Product ↔ Category (products can belong to multiple categories)
+- **ManyToMany with Extra Attributes**: Order ↔ Product through OrderItem (with quantity and price)
+
+### Order Status Management
+The system implements a comprehensive order status system:
+- `WAITING_PAYMENT` - Order created, awaiting payment
+- `PAID` - Payment processed successfully
+- `SHIPPED` - Order shipped to customer
+- `DELIVERED` - Order delivered to customer
+- `CANCELED` - Order canceled
 
 ## 🔮 Future Enhancements
 
 This template can be extended with:
 
-- Complete CRUD operations (POST, PUT, DELETE)
-- Input validation and error handling
-- Authentication and authorization
+- Complete CRUD operations (POST, PUT, DELETE) for all entities
+- Input validation and error handling with custom exceptions
+- Authentication and authorization with Spring Security
+- Order total calculation and payment processing
+- Inventory management and stock tracking
+- Advanced search and filtering capabilities
+- RESTful API documentation with Swagger/OpenAPI
+- Unit and integration testing with comprehensive coverage
 
 ## 🤝 Contributing
 
