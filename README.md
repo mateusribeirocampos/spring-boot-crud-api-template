@@ -279,4 +279,4 @@ This project is open source and available under the [MIT License](LICENSE).
 **Mateus Campos**
 
 - GitHub: [@mateusribeirocampos](https://github.com/mateusribeirocampos)
-- LinkedIn: [Mateus Campos](https://linkedin.com/in/mateusribeirocampos)
+- LinkedIn: [Mateus Campos](https://www.linkedin.com/in/mateus-ribeiro-de-campos-6a135331/)
