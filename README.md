@@ -9,9 +9,9 @@ A comprehensive Spring Boot template for building RESTful APIs with full e-comme
 - **JPA/Hibernate** for data persistence with complex relationships
 - **H2 Database** for development and testing
 - **Layered Architecture** (Controller → Service → Repository)
-- **E-commerce Domain Model** with Users, Orders, Products, Categories
+- **E-commerce Domain Model** with Users, Orders, Products, Categories, Payments
 - **Many-to-Many Associations** with JoinTable and extra attributes
-- **Order Management System** with OrderItems and OrderStatus enum
+- **Order Management System** with OrderItems, OrderStatus enum, and Payment tracking
 - **Test Profile** with comprehensive database seeding
 - **Maven** build system
 - **Clean Code** structure following Spring Boot best practices
@@ -86,11 +86,11 @@ The application uses H2 in-memory database for development and testing.
 
 ### Sample Data
 
-The application automatically seeds the database with comprehensive sample data:
+The application automatically seeds the database with comprehensive sample data through the `TestConfig` class:
 
 **Users:**
-- Maria Brown (maria@gmail.com)
-- Alex Green (alex@gmail.com)
+- Maria Brown (maria@gmail.com) - Phone: 988888888
+- Alex Green (alex@gmail.com) - Phone: 977777777
 
 **Categories:**
 - Electronics
@@ -98,15 +98,21 @@ The application automatically seeds the database with comprehensive sample data:
 - Computers
 
 **Products:**
-- The Lord of the Rings (Books)
-- Smart TV (Electronics, Computers)
-- Macbook Pro (Computers)
-- PC Gamer (Computers)
-- Rails for Dummies (Books)
+- The Lord of the Rings ($90.50) - Category: Books
+- Smart TV ($2190.00) - Categories: Electronics, Computers
+- Macbook Pro ($1250.00) - Category: Computers
+- PC Gamer ($1200.00) - Category: Computers
+- Rails for Dummies ($100.99) - Category: Books
 
 **Orders:**
-- Multiple orders with different statuses (PAID, WAITING_PAYMENT, DELIVERED)
-- Order items linking products to orders with quantities and prices
+- Order 1 (2019-06-20): Status PAID, User: Maria Brown
+  - 2x The Lord of the Rings + 1x Macbook Pro
+  - Payment completed on 2019-06-20T21:53:07Z
+- Order 2 (2019-07-21): Status WAITING_PAYMENT, User: Alex Green
+  - 2x Macbook Pro
+- Order 3 (2019-07-22): Status WAITING_PAYMENT, User: Maria Brown
+  - 2x Rails for Dummies
+- Order 4 (2025-07-07): Status DELIVERED, User: Alex Green
 
 ## 🏗️ Project Structure
 
@@ -123,6 +129,7 @@ src/
 │   │   │   ├── Product.java             # Product entity with categories
 │   │   │   ├── Category.java            # Category entity
 │   │   │   ├── OrderItem.java           # Order item with composite key
+│   │   │   ├── Payment.java             # Payment entity with one-to-one order association
 │   │   │   ├── enums/
 │   │   │   │   └── OrderStatus.java     # Order status enumeration
 │   │   │   └── pk/
@@ -225,12 +232,14 @@ curl -X GET http://localhost:8080/categories/1
 - **Product**: Represents items for sale with pricing and categorization
 - **Category**: Represents product categories with many-to-many relationships
 - **OrderItem**: Represents the association between orders and products with quantity and pricing
+- **Payment**: Represents payment information with one-to-one relationship to orders
 
 ### JPA Relationships
 - **OneToMany**: User → Orders (one user can have many orders)
 - **ManyToOne**: Order → User (many orders belong to one user)
 - **ManyToMany**: Product ↔ Category (products can belong to multiple categories)
 - **ManyToMany with Extra Attributes**: Order ↔ Product through OrderItem (with quantity and price)
+- **OneToOne**: Order ↔ Payment (one order has one payment)
 
 ### Order Status Management
 The system implements a comprehensive order status system:
