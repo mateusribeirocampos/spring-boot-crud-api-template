@@ -22,7 +22,7 @@ import com.campos.backend.repositories.ProductRepository;
 import com.campos.backend.repositories.UserRepository;
 
 @Configuration
-@Profile("test")
+@Profile({"test", "dev"})
 public class TestConfig implements CommandLineRunner {
 	
 	// atributo do tipo UserRepository
@@ -40,9 +40,12 @@ public class TestConfig implements CommandLineRunner {
 	
 	@Autowired
 	private OrderItemRepository orderItemRepository;
-
+	
 	@Override
 	public void run(String... args) throws Exception {
+		
+		// verificar se j[a existem dados para nao duplicar
+		if (userRepository.count() > 0) return;
 		
 		Category cat1 = new Category(null, "Electronics");
 		Category cat2 = new Category(null, "Books");
