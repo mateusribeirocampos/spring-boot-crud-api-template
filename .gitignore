@@ -115,10 +115,6 @@ HELP.md
 .env.*.local
 application-*.yml
 application-*.yaml
-application-*.properties
-application-test.properties
-application-dev.properties
-application-prod.properties
 !application.properties
 !application.yml
 !application.yaml
