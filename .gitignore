@@ -115,9 +115,7 @@ HELP.md
 .env.*.local
 application-*.yml
 application-*.yaml
-# Não commitar arquivos de desenvolvimento
 application-dev.properties
-# Permitir production properties (sem credenciais)
 !application-prod.properties
 !application.properties
 !application.yml
