@@ -1,0 +1,77 @@
+name: Supabase Keep-Alive Ping
+
+on:
+  schedule:
+    # Executa a cada 6 horas (às 00:00, 06:00, 12:00, 18:00 UTC)
+    - cron: '0 */6 * * *'
+  workflow_dispatch:  # Permite executar manualmente
+
+jobs:
+  ping-supabase:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ping Supabase Database
+        run: |
+          echo "🔄 Iniciando ping no Supabase..."
+          echo "Timestamp: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          
+          # Faz uma requisição simples à API REST
+          response=$(curl -s -w "\n%{http_code}" \
+                -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+                -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
+                "https://mstadxawqnnwhvfezfbd.supabase.co/rest/v1/")
+          
+          # Separa o corpo da resposta e o código HTTP
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | head -n-1)
+          
+          echo "📊 Status HTTP: $http_code"
+          
+          # Verifica se a resposta foi bem-sucedida
+          if [[ "$http_code" =~ ^2[0-9][0-9]$ ]]; then
+            echo "✅ Supabase está ativo e respondendo!"
+            echo "Resposta: $body"
+          else
+            echo "⚠️ Resposta inesperada (código $http_code)"
+            echo "Resposta: $body"
+            # Não falha o job, apenas registra
+          fi
+
+      - name: Ping específico na tabela tb_users
+        run: |
+          echo "🔍 Testando acesso à tabela tb_users..."
+          
+          # Tenta fazer um SELECT simples (apenas contagem)
+          response=$(curl -s -w "\n%{http_code}" \
+                -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+                -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
+                "https://mstadxawqnnwhvfezfbd.supabase.co/rest/v1/tb_user?select=count")
+          
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | head -n-1)
+          
+          echo "📊 Status HTTP: $http_code"
+          
+          case $http_code in
+            200)
+              echo "✅ Tabela tb_users acessível!"
+              echo "Resposta: $body"
+              ;;
+            401)
+              echo "🔒 Tabela protegida por RLS (normal para segurança)"
+              echo "O ping foi registrado mesmo assim!"
+              ;;
+            *)
+              echo "⚠️ Resposta: $http_code"
+              echo "Body: $body"
+              ;;
+          esac
+
+      - name: Resumo do Ping
+        run: |
+          echo "📋 ================================"
+          echo "✅ Ping concluído com sucesso!"
+          echo "🕐 Próximo ping em ~6 horas"
+          echo "📅 Data: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          echo "================================"

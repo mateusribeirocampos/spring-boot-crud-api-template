@@ -200,7 +200,7 @@ The application automatically seeds the database with comprehensive sample data 
 4. **Get all products:**
 
    ```bash
-   GET https://spring-boot-ecommerce-api.onrender.com/products
+   GET https://spring-boot-ecommerce-api.onrender.com/products-ç
    ```
 
 5. **Get order details:**
