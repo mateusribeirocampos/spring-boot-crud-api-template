@@ -156,3 +156,6 @@ coverage.xml
 *.cover
 .coverage
 .coverage.*
+
+### Intellij ####
+.idea
