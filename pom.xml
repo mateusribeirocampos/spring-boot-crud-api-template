@@ -57,6 +57,12 @@
 			<scope>runtime</scope>
 		</dependency>
 
+		<!-- Spring Boot Actuator - Monitoring e Health Checks -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<build>
